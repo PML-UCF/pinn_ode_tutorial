@@ -24,7 +24,6 @@ class EulerIntegratorCell(Layer):
     def call(self, inputs, states):
         inputs = ops.convert_to_tensor(inputs)
         a_tm1 = ops.convert_to_tensor(states)
-
         x_d_tm1 = array_ops.concat((inputs, a_tm1[0, :]), axis=1)
         dk_t = self.dKlayer(x_d_tm1)
         da_t = self.C * (dk_t ** self.m)
@@ -56,10 +55,8 @@ def create_model(C, m, dKlayer, a0, batch_input_shape, return_sequences):
     euler = EulerIntegratorCell(batch_input_shape=batch_input_shape,
                                 C=C, m=m, dKlayer=dKlayer,
                                 a0=a0)
-
     PINN = RNN(cell=euler, batch_input_shape=batch_input_shape, return_sequences=return_sequences,
                return_state=False)
-
     model = Sequential()
     model.add(PINN)
     model.compile(loss='mse', optimizer=RMSprop(1e-2))
@@ -67,33 +64,36 @@ def create_model(C, m, dKlayer, a0, batch_input_shape, return_sequences):
     return model
 
 
-"-------------------------------------------------------------------------"
-# Building up dK layer MLP
+if __name__ == "__main__":
+    # Paris law coefficients
+    C = 1.5E-11
+    m = 3.8
+    
+    # data
+    Strain = np.asarray(pd.read_csv('Strain.csv'))[:, :, np.newaxis]
+    Stest  = np.asarray(pd.read_csv('Stest.csv'))[:, :, np.newaxis]
+    atrain = np.asarray(pd.read_csv('atrain.csv'))
+    a0 = np.asarray(pd.read_csv('a0.csv'))
+    a0 = ops.convert_to_tensor(a0, dtype=float32)
 
-C = 1.5E-11  # Paris model constant
-m = 3.8  # Paris model exponent
+    # stress-intensity layer
+    dKlayer = Sequential()
+    dKlayer.add(Normalization(np.min(Strain), np.max(Strain), np.min(atrain), np.max(atrain)))
+    dKlayer.add(Dense(5, activation='tanh'))
+    dKlayer.add(Dense(1))
 
-Strain = np.asarray(pd.read_csv('Strain.csv'))[:, :, np.newaxis]
-Stest = np.asarray(pd.read_csv('Stest.csv'))[:, :, np.newaxis]
-atrain = np.asarray(pd.read_csv('atrain.csv'))
-a0 = np.asarray(pd.read_csv('a0.csv'))
-a0 = ops.convert_to_tensor(a0, dtype=float32)
+    # weight initialization
+    S_range  = np.linspace(np.min(Strain), np.max(Strain), 1000)
+    a_range  = np.linspace(np.min(atrain), np.max(atrain), 1000)
+    dK_range = np.linspace(0, 40.0, 1000)
 
-dKlayer = Sequential()
-dKlayer.add(Normalization(np.min(Strain), np.max(Strain), np.min(atrain), np.max(atrain)))
-dKlayer.add(Dense(5, activation='tanh'))
-dKlayer.add(Dense(1))
+    dKlayer.compile(loss='mse', optimizer=Adam(5e-1))
+    inputs_train = np.transpose(np.asarray([S_range, a_range]))
+    dKlayer.fit(inputs_train, dK_range, epochs=5)
 
-S_range = np.linspace(np.min(Strain), np.max(Strain), 1000)
-a_range = np.linspace(np.min(atrain), np.max(atrain), 1000)
-dK_range = np.linspace(0, 40.0, 1000)  # Estimated dKlayer range
-
-dKlayer.compile(loss='mse', optimizer=Adam(5e-1))
-inputs_train = np.transpose(np.asarray([S_range, a_range]))
-dKlayer.fit(inputs_train, dK_range, epochs=5)
-
-model = create_model(C, m, dKlayer, a0, batch_input_shape=Strain.shape, return_sequences=False)
-model.fit(Strain, atrain, epochs=30, steps_per_epoch=1, verbose=1)
-model_predict = create_model(C, m, dKlayer, a0, batch_input_shape=Stest.shape, return_sequences=True)
-model_predict.set_weights(model.get_weights())
-aPred = model_predict.predict_on_batch(Stest)[:, :, 0]
+    # fitting physics-informed neural network
+    model = create_model(C, m, dKlayer, a0, batch_input_shape=Strain.shape, return_sequences=False)
+    model.fit(Strain, atrain, epochs=30, steps_per_epoch=1, verbose=1)
+    model_predict = create_model(C, m, dKlayer, a0, batch_input_shape=Stest.shape, return_sequences=True)
+    model_predict.set_weights(model.get_weights())
+    aPred = model_predict.predict_on_batch(Stest)[:, :, 0]
