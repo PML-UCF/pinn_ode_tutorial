@@ -83,11 +83,12 @@ if __name__ == "__main__":
     dKlayer.add(Dense(1))
 
     # weight initialization
-    S_range  = np.linspace(np.min(Strain), np.max(Strain), 1000)
-    a_range  = np.linspace(np.min(atrain), np.max(atrain), 1000)
-    dK_range = np.linspace(0, 40.0, 1000)
+    S_range = np.linspace(np.min(Strain), np.max(Strain), 1000)
+    a_range = np.linspace(np.min(atrain), np.max(atrain), 1000)
+    np.random.shuffle(a_range)
+    dK_range = np.linspace(0, np.power((5E-5/C), 1/m), 1000)  # Inverse Paris Law equation estimation of dK range
 
-    dKlayer.compile(loss='mse', optimizer=Adam(5e-1))
+    dKlayer.compile(loss='mse', optimizer=Adam(1e-2))
     inputs_train = np.transpose(np.asarray([S_range, a_range]))
     dKlayer.fit(inputs_train, dK_range, epochs=5)
 
@@ -95,5 +96,6 @@ if __name__ == "__main__":
     model = create_model(C, m, dKlayer, a0, batch_input_shape=Strain.shape, return_sequences=False)
     model.fit(Strain, atrain, epochs=30, steps_per_epoch=1, verbose=1)
     model_predict = create_model(C, m, dKlayer, a0, batch_input_shape=Stest.shape, return_sequences=True)
+    aPred_before = model_predict.predict_on_batch(Stest)[:, :, 0]
     model_predict.set_weights(model.get_weights())
     aPred = model_predict.predict_on_batch(Stest)[:, :, 0]
