@@ -92,8 +92,6 @@ if __name__ == "__main__":
 
     # fitting physics-informed neural network
     model = create_model(C, m, dKlayer, a0, batch_input_shape=Strain.shape, return_sequences=False)
-    model.fit(Strain, atrain, epochs=30, steps_per_epoch=1, verbose=1)
-    model_predict = create_model(C, m, dKlayer, a0, batch_input_shape=Stest.shape, return_sequences=True)
     aPred_before = model_predict.predict_on_batch(Stest)[:, :, 0]
-    model_predict.set_weights(model.get_weights())
-    aPred = model_predict.predict_on_batch(Stest)[:, :, 0]
+    model.fit(Strain, atrain, epochs=30, steps_per_epoch=1, verbose=1)
+    aPred = model.predict_on_batch(Stest)[:, :, 0]
