@@ -9,7 +9,7 @@ from tensorflow import float32
 
 
 class EulerIntegratorCell(Layer):
-    def __init__(self, C, m, dKlayer, units=1, a0=None, **kwargs):
+    def __init__(self, C, m, dKlayer, a0=None, units=1, **kwargs):
         super(EulerIntegratorCell, self).__init__(**kwargs)
         self.units = units
         self.C = C
@@ -51,10 +51,9 @@ class Normalization(Layer):
         return output
 
 
-def create_model(C, m, dKlayer, a0, batch_input_shape, return_sequences):
-    euler = EulerIntegratorCell(batch_input_shape=batch_input_shape,
-                                C=C, m=m, dKlayer=dKlayer,
-                                a0=a0)
+def create_model(C, m, a0, dKlayer, batch_input_shape, return_sequences):
+    euler = EulerIntegratorCell(C=C, m=m, dKlayer=dKlayer, a0=a0,
+                               batch_input_shape=batch_input_shape)
     PINN = RNN(cell=euler, batch_input_shape=batch_input_shape, return_sequences=return_sequences,
                return_state=False)
     model = Sequential()
