@@ -83,8 +83,7 @@ if __name__ == "__main__":
 
     # weight initialization
     S_range = np.linspace(np.min(Strain), np.max(Strain), 1000)
-    a_range = np.linspace(np.min(atrain), np.max(atrain), 1000)
-    np.random.shuffle(a_range)
+    a_range = np.random.shuffle(np.linspace(np.min(atrain), np.max(atrain), 1000))
     dK_range = np.linspace(0, np.power((5E-5/C), 1/m), 1000)  # Inverse Paris Law equation estimation of dK range
 
     dKlayer.compile(loss='mse', optimizer=Adam(1e-2))
