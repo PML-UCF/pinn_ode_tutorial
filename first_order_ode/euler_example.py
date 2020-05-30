@@ -83,15 +83,15 @@ if __name__ == "__main__":
 
     # weight initialization
     S_range = np.linspace(np.min(Strain), np.max(Strain), 1000)
-    a_range = np.random.shuffle(np.linspace(np.min(atrain), np.max(atrain), 1000))
-    dK_range = np.linspace(0, np.power((5E-5/C), 1/m), 1000)  # Inverse Paris Law equation estimation of dK range
+    a_range = np.linspace(np.min(atrain), np.max(atrain), 1000)[np.random.permutation(np.arange(1000))]
+    dK_range = -12.05 + 0.24 * S_range + 760.0 * a_range
 
-    dKlayer.compile(loss='mse', optimizer=Adam(1e-2))
+    dKlayer.compile(loss='mse', optimizer=RMSprop(1e-1))
     inputs_train = np.transpose(np.asarray([S_range, a_range]))
-    dKlayer.fit(inputs_train, dK_range, epochs=5)
+    dKlayer.fit(inputs_train, dK_range, epochs=20)
 
     # fitting physics-informed neural network
     model = create_model(C, m, dKlayer, a0, batch_input_shape=Strain.shape, return_sequences=False)
-    aPred_before = model_predict.predict_on_batch(Stest)[:, :, 0]
+    aPred_before = model.predict_on_batch(Stest)[:, :, 0]
     model.fit(Strain, atrain, epochs=30, steps_per_epoch=1, verbose=1)
     aPred = model.predict_on_batch(Stest)[:, :, 0]
