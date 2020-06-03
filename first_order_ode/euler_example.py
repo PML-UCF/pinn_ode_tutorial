@@ -1,6 +1,6 @@
 from tensorflow.keras.layers import RNN, Dense, Layer
 from tensorflow.keras import Sequential
-from tensorflow.keras.optimizers import RMSprop, Adam
+from tensorflow.keras.optimizers import RMSprop
 from tensorflow.python.framework import ops, tensor_shape
 from tensorflow.python.ops import array_ops
 import pandas as pd
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     a_range = np.linspace(np.min(atrain), np.max(atrain), 1000)[np.random.permutation(np.arange(1000))]
     dK_range = -12.05 + 0.24 * S_range + 760.0 * a_range
 
-    dKlayer.compile(loss='mse', optimizer=Adam(5e-2))
+    dKlayer.compile(loss='mse', optimizer=RMSprop(1e-1))
     inputs_train = np.transpose(np.asarray([S_range, a_range]))
     dKlayer.fit(inputs_train, dK_range, epochs=20)
 
