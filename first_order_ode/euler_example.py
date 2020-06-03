@@ -90,7 +90,7 @@ if __name__ == "__main__":
     dKlayer.fit(inputs_train, dK_range, epochs=20)
 
     # fitting physics-informed neural network
-    model = create_model(C, m, a0, dKlayer, batch_input_shape=Strain.shape, return_sequences=False)
+    model = create_model(C, m, a0, dKlayer, batch_input_shape=Strain.shape)
     aPred_before = model.predict_on_batch(Stest)[:, :]
     model.fit(Strain, atrain, epochs=100, steps_per_epoch=1, verbose=1)
     aPred = model.predict_on_batch(Stest)[:, :]
