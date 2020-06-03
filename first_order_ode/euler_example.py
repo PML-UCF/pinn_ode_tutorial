@@ -52,7 +52,7 @@ class Normalization(Layer):
         return output
 
 
-def create_model(C, m, a0, dKlayer, batch_input_shape, return_sequences, return_state=False):
+def create_model(C, m, a0, dKlayer, batch_input_shape, return_sequences=False, return_state=False):
     euler = EulerIntegratorCell(C=C, m=m, dKlayer=dKlayer, a0=a0, batch_input_shape=batch_input_shape)
     PINN  = RNN(cell=euler, batch_input_shape=batch_input_shape, return_sequences=return_sequences, return_state=return_state)
     model = Sequential()
