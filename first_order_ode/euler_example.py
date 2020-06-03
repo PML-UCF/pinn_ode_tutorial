@@ -64,16 +64,14 @@ def create_model(C, m, a0, dKlayer, batch_input_shape, return_sequences, return_
 
 if __name__ == "__main__":
     # Paris law coefficients
-    C = 1.5E-11
-    m = 3.8
+    [C, m] = [1.5E-11, 3.8]
     
     # data
     Strain = np.asarray(pd.read_csv('Strain.csv'))[:, :, np.newaxis]
     Stest  = np.asarray(pd.read_csv('Stest.csv'))[:, :, np.newaxis]
     atrain = np.asarray(pd.read_csv('atrain.csv'))
     a0 = np.asarray(pd.read_csv('a0.csv'))
-    a0 = ops.convert_to_tensor(a0, dtype=float32)
-
+    
     # stress-intensity layer
     dKlayer = Sequential()
     dKlayer.add(Normalization(np.min(Strain), np.max(Strain), np.min(atrain), np.max(atrain)))
@@ -90,7 +88,7 @@ if __name__ == "__main__":
     dKlayer.fit(inputs_train, dK_range, epochs=20)
 
     # fitting physics-informed neural network
-    model = create_model(C, m, a0, dKlayer, batch_input_shape=Strain.shape)
+    model = create_model(C=C, m=m, a0=ops.convert_to_tensor(a0, dtype=float32), dKlayer=dKlayer, batch_input_shape=Strain.shape)
     aPred_before = model.predict_on_batch(Stest)[:, :]
     model.fit(Strain, atrain, epochs=100, steps_per_epoch=1, verbose=1)
     aPred = model.predict_on_batch(Stest)[:, :]
