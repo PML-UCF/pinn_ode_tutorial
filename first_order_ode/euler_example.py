@@ -1,12 +1,12 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 from tensorflow.keras.layers import RNN, Dense, Layer
 from tensorflow.keras import Sequential
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.python.framework import ops, tensor_shape
 from tensorflow.python.ops import array_ops
-import pandas as pd
-import numpy as np
 from tensorflow import float32
-
 
 class EulerIntegratorCell(Layer):
     def __init__(self, C, m, dKlayer, a0=None, units=1, **kwargs):
@@ -34,7 +34,6 @@ class EulerIntegratorCell(Layer):
     def get_initial_state(self, inputs=None, batch_size=None, dtype=None):
         return self.a0
 
-
 class Normalization(Layer):
     def __init__(self, S_low, S_up, a_low, a_up, **kwargs):
         super(Normalization, self).__init__(**kwargs)
@@ -50,16 +49,13 @@ class Normalization(Layer):
         output  = (inputs - [self.low_bound_S, self.low_bound_a]) / [(self.upper_bound_S - self.low_bound_S), (self.upper_bound_a - self.low_bound_a)]
         return output
 
-
 def create_model(C, m, a0, dKlayer, batch_input_shape, return_sequences=False, return_state=False):
     euler = EulerIntegratorCell(C=C, m=m, dKlayer=dKlayer, a0=a0, batch_input_shape=batch_input_shape)
     PINN  = RNN(cell=euler, batch_input_shape=batch_input_shape, return_sequences=return_sequences, return_state=return_state)
     model = Sequential()
     model.add(PINN)
-    model.compile(loss='mse', optimizer=RMSprop(1e-1))
-
+    model.compile(loss='mse', optimizer=RMSprop(1e-2))
     return model
-
 
 if __name__ == "__main__":
     # Paris law coefficients
@@ -67,9 +63,8 @@ if __name__ == "__main__":
     
     # data
     Strain = np.asarray(pd.read_csv('Strain.csv'))[:, :, np.newaxis]
-    Stest  = np.asarray(pd.read_csv('Stest.csv'))[:, :, np.newaxis]
     atrain = np.asarray(pd.read_csv('atrain.csv'))
-    a0 = np.asarray(pd.read_csv('a0.csv'))
+    a0     = np.asarray(pd.read_csv('a0.csv'))
     
     # stress-intensity layer
     dKlayer = Sequential()
@@ -82,12 +77,23 @@ if __name__ == "__main__":
     a_range  = np.linspace(np.min(atrain), np.max(atrain), 1000)[np.random.permutation(np.arange(1000))]
     dK_range = -12.05 + 0.24 * S_range + 760.0 * a_range
 
-    dKlayer.compile(loss='mse', optimizer=RMSprop(1e-1))
+    dKlayer.compile(loss='mse', optimizer=RMSprop(1e-2))
     inputs_train = np.transpose(np.asarray([S_range, a_range]))
-    dKlayer.fit(inputs_train, dK_range, epochs=20)
+    dKlayer.fit(inputs_train, dK_range, epochs=100)
 
     # fitting physics-informed neural network
     model = create_model(C=C, m=m, a0=ops.convert_to_tensor(a0, dtype=float32), dKlayer=dKlayer, batch_input_shape=Strain.shape)
-    aPred_before = model.predict_on_batch(Stest)[:, :]
-    model.fit(Strain, atrain, epochs=100, steps_per_epoch=1, verbose=1)
-    aPred = model.predict_on_batch(Stest)[:, :]
+    aPred_before = model.predict_on_batch(Strain)[:, :]
+    model.fit(Strain, atrain, epochs=200, steps_per_epoch=1, verbose=1)
+    aPred = model.predict_on_batch(Strain)[:, :]
+
+    # plotting predictions
+    fig = plt.figure()
+    plt.plot([0,0.05],[0,0.05],'--k')
+    plt.plot(atrain, aPred_before, 'o', label = 'before training')
+    plt.plot(atrain, aPred, 's', label = 'after training')
+    plt.xlabel("actual crack length")
+    plt.ylabel("predicted crack length")
+    plt.legend(loc = 'upper center',facecolor = 'w')
+    plt.grid(which='both')
+    plt.show()    
