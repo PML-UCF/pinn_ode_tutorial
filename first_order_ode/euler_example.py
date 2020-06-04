@@ -62,9 +62,9 @@ if __name__ == "__main__":
     [C, m] = [1.5E-11, 3.8]
     
     # data
-    Strain = np.asarray(pd.read_csv('Strain.csv'))[:, :, np.newaxis]
+    Strain = np.asarray(pd.read_csv('Strain.csv'))[:,:,np.newaxis]
     atrain = np.asarray(pd.read_csv('atrain.csv'))
-    a0     = np.asarray(pd.read_csv('a0.csv'))
+    a0     = np.asarray(pd.read_csv('a0.csv'))[0,0]*np.ones((Strain.shape[0],1))
     
     # stress-intensity layer
     dKlayer = Sequential()
@@ -83,17 +83,18 @@ if __name__ == "__main__":
 
     # fitting physics-informed neural network
     model = create_model(C=C, m=m, a0=ops.convert_to_tensor(a0, dtype=float32), dKlayer=dKlayer, batch_input_shape=Strain.shape)
-    aPred_before = model.predict_on_batch(Strain)[:, :]
-    model.fit(Strain, atrain, epochs=200, steps_per_epoch=1, verbose=1)
-    aPred = model.predict_on_batch(Strain)[:, :]
+    aPred_before = model.predict_on_batch(Strain)[:,:]
+    model.fit(Strain, atrain, epochs=100, steps_per_epoch=1, verbose=1)
+    aPred = model.predict_on_batch(Strain)[:,:]
 
     # plotting predictions
     fig = plt.figure()
     plt.plot([0,0.05],[0,0.05],'--k')
     plt.plot(atrain, aPred_before, 'o', label = 'before training')
     plt.plot(atrain, aPred, 's', label = 'after training')
-    plt.xlabel("actual crack length")
-    plt.ylabel("predicted crack length")
+    plt.xlabel("actual crack length (m)")
+    plt.ylabel("predicted crack length (m)")
     plt.legend(loc = 'upper center',facecolor = 'w')
     plt.grid(which='both')
-    plt.show()    
+    plt.show()
+    
