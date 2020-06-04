@@ -62,9 +62,9 @@ if __name__ == "__main__":
     [C, m] = [1.5E-11, 3.8]
     
     # data
-    Strain = np.asarray(pd.read_csv('Strain.csv'))[:,:,np.newaxis]
-    atrain = np.asarray(pd.read_csv('atrain.csv'))
-    a0     = np.asarray(pd.read_csv('a0.csv'))[0,0]*np.ones((Strain.shape[0],1))
+    Strain = np.asarray(pd.read_csv('./data/Strain.csv'))[:,:,np.newaxis]
+    atrain = np.asarray(pd.read_csv('./data/atrain.csv'))
+    a0     = np.asarray(pd.read_csv('./data/a0.csv'))[0,0]*np.ones((Strain.shape[0],1))
     
     # stress-intensity layer
     dKlayer = Sequential()

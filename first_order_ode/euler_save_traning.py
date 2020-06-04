@@ -14,9 +14,9 @@ if __name__ == "__main__":
     [C, m] = [1.5E-11, 3.8]
     
     # data
-    Strain = np.asarray(pd.read_csv('Strain.csv'))[:, :, np.newaxis]
-    atrain = np.asarray(pd.read_csv('atrain.csv'))
-    a0     = np.asarray(pd.read_csv('a0.csv'))[0,0]*np.ones((Strain.shape[0],1))
+    Strain = np.asarray(pd.read_csv('./data/Strain.csv'))[:, :, np.newaxis]
+    atrain = np.asarray(pd.read_csv('./data/atrain.csv'))
+    a0     = np.asarray(pd.read_csv('./data/a0.csv'))[0,0]*np.ones((Strain.shape[0],1))
     
     # stress-intensity layer
     dKlayer = Sequential()
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     dKlayer.fit(inputs_train, dK_range, epochs=100)
 
     # fitting physics-informed neural network
-    mckp = ModelCheckpoint(filepath = "./models/cp.ckpt", monitor = 'loss', verbose = 1,
+    mckp = ModelCheckpoint(filepath = "./savedmodels/cp.ckpt", monitor = 'loss', verbose = 1,
                            save_best_only = True, mode = 'min', save_weights_only = True)
     
     model = create_model(C=C, m=m, a0=ops.convert_to_tensor(a0, dtype=float32), dKlayer=dKlayer, batch_input_shape=Strain.shape)

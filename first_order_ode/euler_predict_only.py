@@ -14,9 +14,9 @@ if __name__ == "__main__":
     [C, m] = [1.5E-11, 3.8]
     
     # data
-    Stest = np.asarray(pd.read_csv('Stest.csv'))[:, :, np.newaxis]
-    atest = np.asarray(pd.read_csv('atest.csv'))
-    a0    = np.asarray(pd.read_csv('a0.csv'))[0,0]*np.ones((Stest.shape[0],1))
+    Stest = np.asarray(pd.read_csv('./data/Stest.csv'))[:, :, np.newaxis]
+    atest = np.asarray(pd.read_csv('./data/atest.csv'))
+    a0    = np.asarray(pd.read_csv('./data/a0.csv'))[0,0]*np.ones((Stest.shape[0],1))
     
     # stress-intensity layer
     dKlayer = Sequential()
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     aBefore = model.predict_on_batch(Stest)[:,:,0].numpy()
     
     # loading weights from trained model
-    model.load_weights("./models/cp.ckpt")
+    model.load_weights("./savedmodels/cp.ckpt")
     aAfter = model.predict_on_batch(Stest)[:,:,0].numpy()
     
     # plotting predictions
