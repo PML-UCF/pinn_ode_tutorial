@@ -1,1 +1,1 @@
-"# 2020_pinn_educational" 
+# Python Implementation of Ordinary Differential EquationsSolvers using Hybrid Physics-informed Neural Networks
