@@ -36,11 +36,11 @@ if __name__ == "__main__":
     # building the model and predicting before "training"
     model = create_model(C=C, m=m, a0=ops.convert_to_tensor(a0, dtype=float32),
                          dKlayer=dKlayer, return_sequences=True, batch_input_shape=Stest.shape)
-    aBefore = model.predict_on_batch(Stest)[:,:,0].numpy()
+    aBefore = model.predict_on_batch(Stest)[:,:,0]
     
     # loading weights from trained model
     model.load_weights("./savedmodels/cp.ckpt")
-    aAfter = model.predict_on_batch(Stest)[:,:,0].numpy()
+    aAfter = model.predict_on_batch(Stest)[:,:,0]
     
     # plotting predictions
     fig = plt.figure()
