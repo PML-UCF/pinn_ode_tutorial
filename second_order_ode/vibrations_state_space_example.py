@@ -2,7 +2,6 @@ from tensorflow.keras.layers import RNN, Dense, Layer
 from tensorflow.keras import Sequential
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.python.ops import array_ops, gen_math_ops
-from tensorflow.python.framework import ops
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -12,9 +11,6 @@ class RungeKuttaIntegratorCell(Layer):
     def __init__(self, m, c, k, dt, initial_state, input_n_dim, units=1, **kwargs):
         super(RungeKuttaIntegratorCell, self).__init__(**kwargs)
         self.units = units
-        # self.M = tf.Variable(M, trainable=False)
-        # self.C = tf.Variable(C, trainable=True)
-        # self.K = tf.Variable(K, trainable=False)
         self.m = m
         self.c = c
         self.k = k
@@ -24,28 +20,18 @@ class RungeKuttaIntegratorCell(Layer):
 
     def build(self, input_shape, **kwargs):
 
-        # self.c_1 = self.add_weight("c_1", shape = self.c[0].shape, trainable = True, initializer = lambda shape, dtype: self.c[0], **kwargs)
-        # self.c_2 = self.add_weight("c_2", shape = self.c[1].shape, trainable = True, initializer = lambda shape, dtype: self.c[1], **kwargs)
-        # self.c_3 = self.add_weight("c_3", shape = self.c[2].shape, trainable = True, initializer = lambda shape, dtype: self.c[2], **kwargs)
-        #
-        # self.m_1 = self.add_weight("m_1", shape = self.m[0].shape, trainable = False, initializer = lambda shape, dtype: self.m[0], **kwargs)
-        # self.m_2 = self.add_weight("m_2", shape = self.m[1].shape, trainable = False, initializer = lambda shape, dtype: self.m[1], **kwargs)
-        #
-        # self.k_1 = self.add_weight("k_1", shape = self.k[0].shape, trainable = False, initializer = lambda shape, dtype: self.k[0], **kwargs)
-        # self.k_2 = self.add_weight("k_2", shape = self.k[1].shape, trainable = False, initializer = lambda shape, dtype: self.k[1], **kwargs)
-        # self.k_3 = self.add_weight("k_3", shape = self.k[2].shape, trainable = False, initializer = lambda shape, dtype: self.k[2], **kwargs)
-
-        # self.k_1 = tf.Variable(self.k[0], trainable=False)
-        # self.k_2 = tf.Variable(self.k[1], trainable=False)
-        # self.k_3 = tf.Variable(self.k[2], trainable=False)
-
-        # self.M = tf.convert_to_tensor([[self.m_1, 0], [0, self.m_2]], dtype=tf.float32)
-        # self.C = tf.convert_to_tensor([[self.c_1 + self.c_2, -self.c_2], [-self.c_2, self.c_2 + self.c_3]], dtype=tf.float32)
-        # self.K = tf.convert_to_tensor([[self.k_1 + self.k_2, -self.k_2], [-self.k_2, self.k_2 + self.k_3]], dtype=tf.float32)
-
-        self.M = self.add_weight("M", shape = (2, 2), trainable = False, initializer = lambda shape, dtype: [[self.m[0], 0], [0, self.m[1]]], **kwargs)
-        self.C = self.add_weight("C", shape = (2, 2), trainable = True, initializer = lambda shape, dtype: [[self.c[0] + self.c[1], -self.c[1]], [-self.c[1], self.c[1] + self.c[2]]], **kwargs)
-        self.K = self.add_weight("K", shape = (2, 2), trainable = False, initializer = lambda shape, dtype: [[self.k[0] + self.k[1], -self.k[1]], [-self.k[1], self.k[1] + self.k[2]]], **kwargs)
+        self.M = self.add_weight("M", shape = (2, 2),
+                                 trainable = False,
+                                 initializer = lambda shape,
+                                                      dtype: [[self.m[0], 0], [0, self.m[1]]], **kwargs)
+        self.C = self.add_weight("C", shape = (2, 2),
+                                 trainable = True,
+                                 initializer = lambda shape,
+                                                      dtype: [[self.c[0] + self.c[1], -self.c[1]], [-self.c[1], self.c[1] + self.c[2]]], **kwargs)
+        self.K = self.add_weight("K", shape = (2, 2),
+                                 trainable = False,
+                                 initializer = lambda shape,
+                                                      dtype: [[self.k[0] + self.k[1], -self.k[1]], [-self.k[1], self.k[1] + self.k[2]]], **kwargs)
 
         n = self.M.shape[0]
         self.I = tf.eye(n, dtype=tf.float32) #dtype=2self.m.dtype
@@ -154,5 +140,25 @@ if __name__ == "__main__":
 
     yPred_before = model.predict_on_batch(utest)[0, :, :]
 
-    model.fit(utrain, ytrain, epochs=100, steps_per_epoch=1, verbose=1)
+    model.fit(utrain, ytrain, epochs=10, steps_per_epoch=1, verbose=1)
     yPred = model.predict_on_batch(utest)[0, :, :]
+
+    import matplotlib.pyplot as plt
+    import matplotlib as matplotlib
+
+    t = df[['t']].values
+
+    matplotlib.rc('font', size=14)
+
+    ifig = 1
+    fig = plt.figure(ifig)
+    fig.clf()
+
+    plt.plot(t, ytrain[0, :, :], 'gray')
+    plt.plot(t, yPred_before[:, :], 'r', label='before training')
+    plt.plot(t, yPred[:, :], 'b', label='after training')
+    plt.xlabel('t')
+    plt.ylabel('mse')
+    plt.grid('on')
+    plt.legend()
+    plt.show()

@@ -2,11 +2,7 @@ from tensorflow.keras.layers import RNN, Dense, Layer
 from tensorflow.keras import Sequential
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.python.ops import array_ops, gen_math_ops
-import pandas as pd
-import numpy as np
 import tensorflow as tf
-import matplotlib.pyplot as plt
-import matplotlib as matplotlib
 
 
 class RungeKuttaIntegratorCell(Layer):
@@ -86,45 +82,3 @@ def create_model(m, c, k, dt, batch_input_shape, initial_state = None, return_se
     model.add(ssRNN)
     model.compile(loss='mse', optimizer=RMSprop(1e4), metrics=['mae'])
     return model
-
-if __name__ == "__main__":
-    # mass, spring coefficient, damping coefficient
-    m = np.array([20.0, 10.0])
-    c = np.array([10.0, 10.0, 10.0])
-    k = np.array([2e3, 1e3, 5e3])
-
-    n = 2
-    dt = 0.002
-
-    # data
-    df = pd.read_csv('data.csv')
-    t = df[['t']].values
-    utrain = df[['u0', 'u1']].values
-    ytrain = df[['yT0', 'yT1']].values
-    utrain = utrain[np.newaxis, :, :]
-    ytrain = ytrain[np.newaxis, :, :]
-
-    x0 = np.zeros((2 * n,), dtype='float32')
-    initial_state = [x0[np.newaxis, :]]
-
-    # fitting physics-informed neural network
-    model = create_model(m, c, k, dt, batch_input_shape=utrain.shape, initial_state=initial_state, return_sequences=True, unroll=False)
-    yPred_before = model.predict_on_batch(utrain)[0, :, :]
-    model.fit(utrain, ytrain, epochs=100, steps_per_epoch=1, verbose=1)
-    yPred = model.predict_on_batch(utrain)[0, :, :]
-
-    # Plotting prediction results
-    matplotlib.rc('font', size=14)
-
-    ifig = 1
-    fig = plt.figure(ifig)
-    fig.clf()
-
-    plt.plot(t, ytrain[0, :, :], 'gray')
-    plt.plot(t, yPred_before[:, :], 'r', label='before training')
-    plt.plot(t, yPred[:, :], 'b', label='after training')
-    plt.xlabel('t')
-    plt.ylabel('z')
-    plt.grid('on')
-    plt.legend()
-    plt.show()
