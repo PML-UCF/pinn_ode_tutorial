@@ -13,20 +13,21 @@ if __name__ == "__main__":
     df = pd.read_csv('./data/data.csv')
     t  = df[['t']].values
     dt = (t[1] - t[0])[0]
-    utest = df[['u0', 'u1']].values[np.newaxis, :, :]
+    u = df[['u0', 'u1']].values[np.newaxis, :, :]
+    yObs = df[['yT0', 'yT1']].values[np.newaxis, :, :]
 
     initial_state = np.zeros((1,2 * len(m),), dtype='float32')
 
     # fitting physics-informed neural network
-    model = create_model(m, c, k, dt, initial_state=initial_state, batch_input_shape=utest.shape)
-    yPred_before = model.predict_on_batch(utest)[0, :, :]
+    model = create_model(m, c, k, dt, initial_state=initial_state, batch_input_shape=u.shape)
+    yPred_before = model.predict_on_batch(u)[0, :, :]
     model.load_weights("./savedmodels/cp.ckpt")
-    yPred = model.predict_on_batch(utest)[0, :, :]
+    yPred = model.predict_on_batch(u)[0, :, :]
 
     # plotting predictions
-#    plt.plot(t, ytrain[0, :, :], 'gray')
-    plt.plot(t, yPred_before[:, :], 'r', label='before training')
-    plt.plot(t, yPred[:, :], 'b', label='after training')
+    plt.plot(t, yObs[0,:,:], 'gray')
+    plt.plot(t, yPred_before[:,:], 'r', label='before training')
+    plt.plot(t, yPred[:,:], 'b', label='after training')
     plt.xlabel('t')
     plt.ylabel('y')
     plt.grid('on')

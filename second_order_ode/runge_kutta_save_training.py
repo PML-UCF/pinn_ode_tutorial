@@ -25,10 +25,9 @@ if __name__ == "__main__":
 
     # fitting physics-informed neural network
     model = create_model(m, c, k, dt, initial_state=initial_state, batch_input_shape=utrain.shape)
-    history = model.fit(utrain, ytrain, epochs=20, steps_per_epoch=1, verbose=1, callbacks=[mckp])
+    history = model.fit(utrain, ytrain, epochs=100, steps_per_epoch=1, verbose=1, callbacks=[mckp])
 
-    # plotting predictions
-    fig = plt.figure()
+    # plotting
     plt.plot(np.array(history.history['loss']))
     plt.xlabel("epoch")
     plt.ylabel("loss")

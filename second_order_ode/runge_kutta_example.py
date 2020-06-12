@@ -53,9 +53,9 @@ class RungeKuttaIntegratorCell(Layer):
 
 def create_model(m, c, k, dt, initial_state, batch_input_shape, return_sequences = True, unroll = False):
     rkCell = RungeKuttaIntegratorCell(m=m, c=c, k=k, dt=dt, initial_state=initial_state)
-    ssRNN  = RNN(cell=rkCell, batch_input_shape=batch_input_shape, return_sequences=return_sequences, return_state=False, unroll=unroll)
+    PINN   = RNN(cell=rkCell, batch_input_shape=batch_input_shape, return_sequences=return_sequences, return_state=False, unroll=unroll)
     model  = Sequential()
-    model.add(ssRNN)
+    model.add(PINN)
     model.compile(loss='mse', optimizer=RMSprop(1e4), metrics=['mae'])
     return model
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     initial_state = np.zeros((1,2 * len(m),), dtype='float32')
     model = create_model(m, c, k, dt, initial_state=initial_state, batch_input_shape=utrain.shape)
     yPred_before = model.predict_on_batch(utrain)[0, :, :]
-    model.fit(utrain, ytrain, epochs=20, steps_per_epoch=1, verbose=1)
+    model.fit(utrain, ytrain, epochs=100, steps_per_epoch=1, verbose=1)
     yPred = model.predict_on_batch(utrain)[0, :, :]
 
     # plotting prediction results

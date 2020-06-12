@@ -63,11 +63,11 @@ if __name__ == "__main__":
     output = signal.dlsim(systemD, u = u, t = t, x0 = x0)
     yScipy = output[1]
     
-    yTarget = yScipy + 2e-5*np.random.randn(yScipy.shape[0], yScipy.shape[1])
+    yTarget = yScipy + 1.5e-5*np.random.randn(yScipy.shape[0], yScipy.shape[1])
     
     df = pd.DataFrame(np.hstack([t[:,np.newaxis],u,yScipy,yTarget]), columns=['t', 'u0','u1','y0','y1','yT0','yT1'])
     
-    df.to_csv('./data02.csv', index = False)
+    df.to_csv('./data.csv', index = False)
     
     #--------------------------------------------------------------------------  
     plt.plot(t, yTarget, '-', color ='gray')

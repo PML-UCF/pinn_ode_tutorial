@@ -51,8 +51,8 @@ class RungeKuttaIntegratorCell(Layer):
 
 def create_model(m, c, k, dt, initial_state, batch_input_shape, return_sequences = True, unroll = False):
     rkCell = RungeKuttaIntegratorCell(m=m, c=c, k=k, dt=dt, initial_state=initial_state)
-    ssRNN  = RNN(cell=rkCell, batch_input_shape=batch_input_shape, return_sequences=return_sequences, return_state=False, unroll=unroll)
+    PINN   = RNN(cell=rkCell, batch_input_shape=batch_input_shape, return_sequences=return_sequences, return_state=False, unroll=unroll)
     model  = Sequential()
-    model.add(ssRNN)
+    model.add(PINN)
     model.compile(loss='mse', optimizer=RMSprop(1e4), metrics=['mae'])
     return model
