@@ -1,8 +1,8 @@
 from tensorflow.keras.layers import RNN, Layer
 from tensorflow.keras import Sequential
 from tensorflow.keras.optimizers import RMSprop
-from tensorflow.python.framework import ops, tensor_shape
-from tensorflow.python.ops import array_ops
+from tensorflow.python.framework import tensor_shape
+from tensorflow import concat, convert_to_tensor
 
 class EulerIntegratorCell(Layer):
     def __init__(self, C, m, dKlayer, a0=None, units=1, **kwargs):
@@ -19,9 +19,9 @@ class EulerIntegratorCell(Layer):
         self.built = True
 
     def call(self, inputs, states):
-        inputs  = ops.convert_to_tensor(inputs)
-        a_tm1   = ops.convert_to_tensor(states)
-        x_d_tm1 = array_ops.concat((inputs, a_tm1[0, :]), axis=1)
+        inputs  = convert_to_tensor(inputs)
+        a_tm1   = convert_to_tensor(states)
+        x_d_tm1 = concat((inputs, a_tm1[0, :]), axis=1)
         dk_t    = self.dKlayer(x_d_tm1)
         da_t    = self.C * (dk_t ** self.m)
         a       = da_t + a_tm1[0, :]

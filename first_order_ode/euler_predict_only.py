@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import RMSprop
-from tensorflow.keras.callbacks import ModelCheckpoint
-from tensorflow.python.framework import ops
-from tensorflow import float32
+from tensorflow import float32, convert_to_tensor
 from model import Normalization, create_model
 
 if __name__ == "__main__":
@@ -34,7 +32,7 @@ if __name__ == "__main__":
     dKlayer.fit(inputs_train, dK_range, epochs=100)
 
     # building the model and predicting before "training"
-    model = create_model(C=C, m=m, a0=ops.convert_to_tensor(a0, dtype=float32),
+    model = create_model(C=C, m=m, a0=convert_to_tensor(a0, dtype=float32),
                          dKlayer=dKlayer, return_sequences=True, batch_input_shape=Stest.shape)
     aBefore = model.predict_on_batch(Stest)[:,:,0]
     

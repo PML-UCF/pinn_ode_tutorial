@@ -4,9 +4,8 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.layers import RNN, Dense, Layer
 from tensorflow.keras import Sequential
 from tensorflow.keras.optimizers import RMSprop
-from tensorflow.python.framework import ops, tensor_shape
-from tensorflow.python.ops import array_ops
-from tensorflow import float32
+from tensorflow.python.framework import tensor_shape
+from tensorflow import float32, concat, convert_to_tensor
 
 class EulerIntegratorCell(Layer):
     def __init__(self, C, m, dKlayer, a0=None, units=1, **kwargs):
@@ -23,9 +22,9 @@ class EulerIntegratorCell(Layer):
         self.built = True
 
     def call(self, inputs, states):
-        inputs  = ops.convert_to_tensor(inputs)
-        a_tm1   = ops.convert_to_tensor(states)
-        x_d_tm1 = array_ops.concat((inputs, a_tm1[0, :]), axis=1)
+        inputs  = convert_to_tensor(inputs)
+        a_tm1   = convert_to_tensor(states)
+        x_d_tm1 = concat((inputs, a_tm1[0, :]), axis=1)
         dk_t    = self.dKlayer(x_d_tm1)
         da_t    = self.C * (dk_t ** self.m)
         a       = da_t + a_tm1[0, :]
@@ -82,7 +81,7 @@ if __name__ == "__main__":
     dKlayer.fit(inputs_train, dK_range, epochs=100)
 
     # fitting physics-informed neural network
-    model = create_model(C=C, m=m, a0=ops.convert_to_tensor(a0, dtype=float32), dKlayer=dKlayer, batch_input_shape=Strain.shape)
+    model = create_model(C=C, m=m, a0=convert_to_tensor(a0, dtype=float32), dKlayer=dKlayer, batch_input_shape=Strain.shape)
     aPred_before = model.predict_on_batch(Strain)[:,:]
     model.fit(Strain, atrain, epochs=100, steps_per_epoch=1, verbose=1)
     aPred = model.predict_on_batch(Strain)[:,:]

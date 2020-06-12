@@ -5,8 +5,7 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.callbacks import ModelCheckpoint
-from tensorflow.python.framework import ops
-from tensorflow import float32
+from tensorflow import float32, convert_to_tensor
 from model import Normalization, create_model
 
 if __name__ == "__main__":
@@ -37,7 +36,7 @@ if __name__ == "__main__":
     mckp = ModelCheckpoint(filepath = "./savedmodels/cp.ckpt", monitor = 'loss', verbose = 1,
                            save_best_only = True, mode = 'min', save_weights_only = True)
     
-    model = create_model(C=C, m=m, a0=ops.convert_to_tensor(a0, dtype=float32), dKlayer=dKlayer, batch_input_shape=Strain.shape)
+    model = create_model(C=C, m=m, a0=convert_to_tensor(a0, dtype=float32), dKlayer=dKlayer, batch_input_shape=Strain.shape)
     history = model.fit(Strain, atrain, epochs=100, steps_per_epoch=1, verbose=1, callbacks=[mckp])
 
     # plotting predictions
