@@ -16,7 +16,7 @@ The repository consists of the following two folders:
 - runge_kutts_predict_only loads the saved model weights and predicts on test data
 - model contains the RungeKuttaIntegratorCell class and the create_model function
 
-In order to run the code you can clone the repository:
+In order to run the codes, you can clone the repository:
 
 ``` 
 $ git clone https://github.com/PML-UCF/pinn_code_tutorial.git
