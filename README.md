@@ -41,4 +41,4 @@ Please cite this repository using:
 
 The corresponding reference entry should look like: 
 
-R. G. Nascimento, K. Fricke and F. A. C. Viana, Python Implementation of Ordinary Differential Equations Solvers using Hybrid Physics-informed Neural Networks, v0.0.1, Zenodo, https://github.com/PML-UCF/pinn_code_tutorial, 10.5281/zenodo.3356877.
+K. Fricke, R. G. Nascimento, and F. A. C. Viana, Python Implementation of Ordinary Differential Equations Solvers using Hybrid Physics-informed Neural Networks, v0.0.1, Zenodo, https://github.com/PML-UCF/pinn_code_tutorial, 10.5281/zenodo.3356877.
