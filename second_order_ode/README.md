@@ -1,4 +1,4 @@
-# Runge-Kutta implementation of second order ordinary differential equation
+# Runge-Kutta implementation of a system of second order ordinary differential equations
 
 This folder contains the implementation of the Runge-Kutta integration of a two degree of freedom vibrations system as example for a second order ordinary differential equation. 
 
