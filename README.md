@@ -1,3 +1,8 @@
+
+
+[![DOI](https://zenodo.org/badge/265305262.svg)](https://zenodo.org/badge/latestdoi/265305262)
+
+
 # Python Implementation of Ordinary Differential Equations Solvers using Hybrid Physics-informed Neural Networks
 
 This repository is provided as a tutorial for the implementation of integration algorithms of first and second order ODEs through recurrent neural networks in Python. The first order example implements an Euler forward integrator used to solve a fatigue crack growth problem. The second order example implements a Runge-Kutta integrator used for the system identification of a two degree of freedom vibrations problem.  
