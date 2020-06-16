@@ -28,17 +28,17 @@ Please cite this repository using:
 @misc{2020_pinn_educational,
 	Author = {Kajetan Fricke and Renato G. Nascimento and Felipe A. C. Viana},
 	Doi = {10.5281/zenodo.3356877},
-	Howpublished = {https://github.com/PML-UCF/pinn\_code\_tutorial},
+	Howpublished = {https://github.com/PML-UCF/pinn\_ode\_tutorial},
 	Month = {May},
 	Publisher = {Zenodo},
 	Title = {Python Implementation of Ordinary Differential Equations Solvers using Hybrid Physics-informed Neural Networks},
-	Url = {https://github.com/PML-UCF/pinn\_code\_tutorial},
+	Url = {https://github.com/PML-UCF/pinn\_ode\_tutorial},
 	Version = {0.0.1},
 	Year = {2020},
-	Bdsk-Url-1 = {https://github.com/PML-UCF/pinn\_code\_tutorial},
+	Bdsk-Url-1 = {https://github.com/PML-UCF/pinn\_ode\_tutorial},
 	Bdsk-Url-2 = {https://doi.org/10.5281/zenodo.3356877}}
 ```
 
 The corresponding reference entry should look like: 
 
-K. Fricke, R. G. Nascimento, and F. A. C. Viana, Python Implementation of Ordinary Differential Equations Solvers using Hybrid Physics-informed Neural Networks, v0.0.1, Zenodo, https://github.com/PML-UCF/pinn_code_tutorial, 10.5281/zenodo.3356877.
+K. Fricke, R. G. Nascimento, and F. A. C. Viana, Python Implementation of Ordinary Differential Equations Solvers using Hybrid Physics-informed Neural Networks, v0.0.1, Zenodo, https://github.com/PML-UCF/pinn_ode_tutorial, 10.5281/zenodo.3356877.
