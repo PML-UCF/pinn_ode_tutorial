@@ -50,5 +50,4 @@ K. Fricke, R. G. Nascimento, and F. A. C. Viana, Python Implementation of Ordina
 
 The following publications out of the PML-UCF research group used/referred to this repository:
 
-[//]: # ### Journal papers
 - R. G. Nascimento, K. Fricke, F. A. C. Viana, "[A tutorial on solving ordinary differential equations using Python and hybrid physics-informed neural network](https://www.sciencedirect.com/science/article/pii/S095219762030292X)," Engineering Applications of Artificial Intelligence, Vol. 96, 2020, 103996. (DOI: 10.1016/j.engappai.2020.103996). 
