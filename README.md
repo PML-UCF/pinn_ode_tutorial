@@ -24,7 +24,7 @@ The repository consists of the following two folders:
 In order to run the codes, you can clone the repository:
 
 ``` 
-$ git clone https://github.com/PML-UCF/pinn_code_tutorial.git
+$ git clone git@github.com:PML-UCF/pinn_ode_tutorial.git
 ```
 ## Citing this repository
 Please cite this repository using:
