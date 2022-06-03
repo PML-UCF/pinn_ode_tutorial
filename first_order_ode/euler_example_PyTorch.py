@@ -142,11 +142,11 @@ if __name__ == "__main__":
     F = 1.0
     
     # data
-    Strain = np.asarray(pd.read_csv('first_order_ode/data/Strain.csv'))[:,:,np.newaxis]
+    Strain = np.asarray(pd.read_csv('./data/Strain.csv'))[:,:,np.newaxis]
     Strain = Tensor(Strain)
-    atrain = np.asarray(pd.read_csv('first_order_ode/data/atrain.csv'))
+    atrain = np.asarray(pd.read_csv('./data/atrain.csv'))
     atrain = Tensor(atrain)
-    a0 = np.asarray(pd.read_csv('first_order_ode/data/a0.csv'))[0,0]*np.ones((Strain.shape[0],1))
+    a0 = np.asarray(pd.read_csv('./data/a0.csv'))[0,0]*np.ones((Strain.shape[0],1))
     a0 = Tensor(a0)
 
     "-------------------------------------------------------------------------"
