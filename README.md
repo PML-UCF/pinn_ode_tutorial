@@ -31,7 +31,7 @@ Please cite this repository using:
 
 ```
 @misc{2020_pinn_educational,
-	Author = {Kajetan Fricke and Renato G. Nascimento and Felipe A. C. Viana},
+	Author = {Kajetan Fricke and Renato G. Nascimento and Augusto D. Marques and Felipe A. C. Viana},
 	Doi = {10.5281/zenodo.3895408},
 	Howpublished = {https://github.com/PML-UCF/pinn\_ode\_tutorial},
 	Month = {May},
@@ -44,7 +44,7 @@ Please cite this repository using:
 
 The corresponding reference entry should look like: 
 
-K. Fricke, R. G. Nascimento, and F. A. C. Viana, Python Implementation of Ordinary Differential Equations Solvers using Hybrid Physics-informed Neural Networks, v0.0.1, Zenodo, https://github.com/PML-UCF/pinn_ode_tutorial, 10.5281/zenodo.3895408.
+K. Fricke, R. G. Nascimento, A. D. Marques, and F. A. C. Viana, Python Implementation of Ordinary Differential Equations Solvers using Hybrid Physics-informed Neural Networks, v0.0.1, Zenodo, https://github.com/PML-UCF/pinn_ode_tutorial, 10.5281/zenodo.3895408.
 
 ## Publications
 
